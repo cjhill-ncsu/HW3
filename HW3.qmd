@@ -1,0 +1,137 @@
+---
+title: "HW3"
+author: "Chris Hill"
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+load("hw2_list.rda")
+str(bp_list)
+```
+
+# Task 1: Control Flow Practice
+
+### (1) Create the status Column
+
+```{r}
+bp_list <- lapply(bp_list, function(df) {
+  df$status <- character(nrow(df))
+  return(df)
+})
+
+str(bp_list)
+```
+
+### (2) Update status for the treatment Data Frame
+
+```{r}
+for (i in seq_len(nrow(bp_list$treatment))) {
+  if (bp_list$treatment$post_bp[i] <= 120) {
+    bp_list$treatment$status[i] <- "optimal"
+  } else if (bp_list$treatment$post_bp[i] <= 130) {
+    bp_list$treatment$status[i] <- "borderline"
+  } else {
+    bp_list$treatment$status[i] <- "high"
+  }
+}
+
+bp_list$treatment |> head() |> knitr::kable()
+```
+
+### (3) Update status for the placebo Data Frame
+
+```{r}
+for (i in seq_len(nrow(bp_list$placebo))) {
+  if (bp_list$placebo$post_bp[i] <= 120) {
+    bp_list$placebo$status[i] <- "optimal"
+  } else if (bp_list$placebo$post_bp[i] <= 130) {
+    bp_list$placebo$status[i] <- "borderline"
+  } else {
+    bp_list$placebo$status[i] <- "high"
+  }
+}
+
+bp_list$placebo |> head() |> knitr::kable()
+```
+
+# Task 2: Function Writing
+
+### (1) Define the Function
+
+```{r}
+calculate_stats <- function(df_list, stat = "mean") {
+  # Retrieve the function corresponding to the statistic
+  my_fun <- get(stat)
+  
+  # Calculate the statistics for each column in both data frames
+  treatment_pre <- my_fun(df_list$treatment$pre_bp, na.rm = TRUE)
+  treatment_post <- my_fun(df_list$treatment$post_bp, na.rm = TRUE)
+  treatment_diff <- my_fun(df_list$treatment$diff_bp, na.rm = TRUE)
+  
+  placebo_pre <- my_fun(df_list$placebo$pre_bp, na.rm = TRUE)
+  placebo_post <- my_fun(df_list$placebo$post_bp, na.rm = TRUE)
+  placebo_diff <- my_fun(df_list$placebo$diff_bp, na.rm = TRUE)
+  
+  # Create a named vector to store the results
+  stats_vector <- c(
+    treatment_pre, treatment_post, treatment_diff,
+    placebo_pre, placebo_post, placebo_diff
+  )
+  
+  # Create meaningful names for the vector
+  names(stats_vector) <- c(
+    paste0(stat, "_treatment_pre"),
+    paste0(stat, "_treatment_post"),
+    paste0(stat, "_treatment_diff"),
+    paste0(stat, "_placebo_pre"),
+    paste0(stat, "_placebo_post"),
+    paste0(stat, "_placebo_diff")
+  )
+  
+  # Return the named vector
+  return(stats_vector)
+}
+```
+
+### (2) Apply the Function to the bp_list
+
+*Apply the function to list of data frames from previous task. Use it without specifying the statistic, then with specifying your statistic as "var", "sd", "min", and "max"*
+
+#### Mean (without specifying statistic)
+
+```{r}
+result_mean <- calculate_stats(bp_list)
+knitr::kable(result_mean)
+```
+
+#### Variance
+
+```{r}
+result_var <- calculate_stats(bp_list, stat = "var")
+knitr::kable(result_var)
+```
+
+#### Standard Deviation
+
+```{r}
+result_sd <- calculate_stats(bp_list, stat = "sd")
+knitr::kable(result_sd)
+```
+
+#### Min
+
+```{r}
+result_min <- calculate_stats(bp_list, stat = "min")
+knitr::kable(result_min)
+```
+
+#### Max
+
+```{r}
+result_max <- calculate_stats(bp_list, stat = "max")
+knitr::kable(result_max)
+```
+
