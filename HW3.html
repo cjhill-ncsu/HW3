@@ -324,12 +324,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1>Task 2: Function Writing</h1>
 <section id="define-the-function" class="level3">
 <h3 class="anchored" data-anchor-id="define-the-function">(1) Define the Function</h3>
+<ul>
+<li><p>Take a list with two data frames.</p></li>
+<li><p>Take a string input for a summary function, defaulting to “mean”.</p></li>
+<li><p>Use get() to dynamically retrieve the function based on the string.</p></li>
+<li><p>Calculate the statistic for pre, post, and diff columns of both data frames.</p></li>
+<li><p>Returns a named vector with meaningful names based on the statistic.</p></li>
+</ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>calculate_stats <span class="ot">&lt;-</span> <span class="cf">function</span>(df_list, <span class="at">stat =</span> <span class="st">"mean"</span>) {</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Retrieve the function corresponding to the statistic</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Takes a string input for a summary function, defaulting to "mean".</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  my_fun <span class="ot">&lt;-</span> <span class="fu">get</span>(stat)</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate the statistics for each column in both data frames</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculates the statistic for pre, post, and diff columns of both data frames.</span></span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  treatment_pre <span class="ot">&lt;-</span> <span class="fu">my_fun</span>(df_list<span class="sc">$</span>treatment<span class="sc">$</span>pre_bp, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  treatment_post <span class="ot">&lt;-</span> <span class="fu">my_fun</span>(df_list<span class="sc">$</span>treatment<span class="sc">$</span>post_bp, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  treatment_diff <span class="ot">&lt;-</span> <span class="fu">my_fun</span>(df_list<span class="sc">$</span>treatment<span class="sc">$</span>diff_bp, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
@@ -338,25 +345,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  placebo_post <span class="ot">&lt;-</span> <span class="fu">my_fun</span>(df_list<span class="sc">$</span>placebo<span class="sc">$</span>post_bp, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  placebo_diff <span class="ot">&lt;-</span> <span class="fu">my_fun</span>(df_list<span class="sc">$</span>placebo<span class="sc">$</span>diff_bp, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Create a named vector to store the results</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Returns a named vector with meaningful names based on the statistic.</span></span>
 <span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  stats_vector <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
 <span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    treatment_pre, treatment_post, treatment_diff,</span>
 <span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    placebo_pre, placebo_post, placebo_diff</span>
 <span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Create meaningful names for the vector</span></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>(stats_vector) <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(stat, <span class="st">"_treatment_pre"</span>),</span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(stat, <span class="st">"_treatment_post"</span>),</span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(stat, <span class="st">"_treatment_diff"</span>),</span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(stat, <span class="st">"_placebo_pre"</span>),</span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(stat, <span class="st">"_placebo_post"</span>),</span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(stat, <span class="st">"_placebo_diff"</span>)</span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Return the named vector</span></span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(stats_vector)</span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>(stats_vector) <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(stat, <span class="st">"_treatment_pre"</span>),</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(stat, <span class="st">"_treatment_post"</span>),</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(stat, <span class="st">"_treatment_diff"</span>),</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(stat, <span class="st">"_placebo_pre"</span>),</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(stat, <span class="st">"_placebo_post"</span>),</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(stat, <span class="st">"_placebo_diff"</span>)</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(stats_vector)  <span class="co"># Returns the named vector.</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="apply-the-function-to-the-bp_list" class="level3">

@@ -61,12 +61,22 @@ bp_list$placebo |> head() |> knitr::kable()
 
 ### (1) Define the Function
 
+- Take a list with two data frames.
+
+- Take a string input for a summary function, defaulting to "mean".
+
+- Use get() to dynamically retrieve the function based on the string.
+
+- Calculate the statistic for pre, post, and diff columns of both data frames.
+
+- Returns a named vector with meaningful names based on the statistic.
+
 ```{r}
 calculate_stats <- function(df_list, stat = "mean") {
-  # Retrieve the function corresponding to the statistic
+  # Takes a string input for a summary function, defaulting to "mean".
   my_fun <- get(stat)
   
-  # Calculate the statistics for each column in both data frames
+  # Calculates the statistic for pre, post, and diff columns of both data frames.
   treatment_pre <- my_fun(df_list$treatment$pre_bp, na.rm = TRUE)
   treatment_post <- my_fun(df_list$treatment$post_bp, na.rm = TRUE)
   treatment_diff <- my_fun(df_list$treatment$diff_bp, na.rm = TRUE)
@@ -75,13 +85,12 @@ calculate_stats <- function(df_list, stat = "mean") {
   placebo_post <- my_fun(df_list$placebo$post_bp, na.rm = TRUE)
   placebo_diff <- my_fun(df_list$placebo$diff_bp, na.rm = TRUE)
   
-  # Create a named vector to store the results
+  # Returns a named vector with meaningful names based on the statistic.
   stats_vector <- c(
     treatment_pre, treatment_post, treatment_diff,
     placebo_pre, placebo_post, placebo_diff
   )
   
-  # Create meaningful names for the vector
   names(stats_vector) <- c(
     paste0(stat, "_treatment_pre"),
     paste0(stat, "_treatment_post"),
@@ -91,9 +100,9 @@ calculate_stats <- function(df_list, stat = "mean") {
     paste0(stat, "_placebo_diff")
   )
   
-  # Return the named vector
-  return(stats_vector)
+  return(stats_vector)  # Returns the named vector.
 }
+
 ```
 
 ### (2) Apply the Function to the bp_list
